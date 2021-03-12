@@ -1,0 +1,10 @@
+{
+  "app.sidebar.overview": "Overview",
+  "app.sidebar.reservations": "Reservations",
+  "app.sidebar.rooms": "Rooms",
+  "app.sidebar.inventory": "Inventory",
+  "app.card.arrivals": "Arrivals",
+  "app.card.departures": "Departures",
+  "app.card.rooms occupied": "Rooms Occupied",
+  "app.card.week": "This Week"
+}

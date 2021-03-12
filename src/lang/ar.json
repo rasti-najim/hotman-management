@@ -1,0 +1,10 @@
+{
+  "app.sidebar.overview": "عام",
+  "app.sidebar.reservations": "الحجوزات",
+  "app.sidebar.rooms": "الغرف",
+  "app.sidebar.inventory": "الانفينتوري",
+  "app.card.arrivals": "الوصول",
+  "app.card.departures": "المغادرين",
+  "app.card.rooms occupied": "الغرف المحجوزة",
+  "app.card.week": "هذا الاسبوع"
+}

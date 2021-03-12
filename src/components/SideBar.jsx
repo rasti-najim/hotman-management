@@ -15,11 +15,11 @@ import {
 import { motion } from "framer";
 
 // custom
-// import { Context } from "../components/Wrapper";
+import { Context } from "../components/Wrapper";
 import { useContext } from "react";
 
 export default function SideBar({ theme, toggleTheme, setLoggedIn }) {
-  //   const context = useContext(Context);
+  const context = useContext(Context);
 
   return (
     <Container>
@@ -50,10 +50,10 @@ export default function SideBar({ theme, toggleTheme, setLoggedIn }) {
           <h6>{theme == "light" ? <FiSun /> : <FiMoon />}</h6>
           {theme == "light" ? "Light" : "Dark"}
         </Button>
-        {/* <Select value={context.locale} onChange={context.selectLanguage}>
+        <Select value={context.locale} onChange={context.selectLanguage}>
           <option value="en">English</option>
-          <option value="ar">Arabic</option>
-        </Select> */}
+          <option value="ar">العربية</option>
+        </Select>
         <Button onClick={logout}>
           <h6>
             <FiLogOut />

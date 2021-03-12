@@ -32,6 +32,13 @@ export default function Analytics() {
       <h2>Today</h2>
       <TodayChart />
       <h2>Reports overview</h2>
+
+      <Chart
+        data={data.filter(function (value) {
+          return value.date.includes("2007");
+        })}
+        accessor={accessor}
+      />
       <Chart
         data={data.filter(function (value) {
           return value.date.includes("2007");
