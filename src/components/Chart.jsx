@@ -45,27 +45,34 @@ const austinAccessors = {
   yAccessor: (d) => d.Austin,
 };
 
-export default function Chart({ data, accessor }) {
+export default function Chart({ title, data, accessor }) {
   useEffect(() => console.log(cityTemperature));
   return (
     <>
       <TitleContainer>
         <div>
-          <span>Gross Volume</span>
+          <span>{title}</span>
+          <h5>$4,000,000</h5>
+        </div>
+        <div>
           <Growth increase>+6.7%</Growth>
         </div>
-        <h5>$4,000,000</h5>
       </TitleContainer>
       <XYChart
         height={300}
         xScale={{ type: "band" }}
         yScale={{ type: "linear" }}
-        margin={{ top: 60, bottom: 60, left: 10, right: 80 }}
+        margin={{ top: 60, bottom: 60, left: 20, right: 80 }}
       >
         {/* <Text verticalAnchor="start" scaleToFit={true} dx={80} dy={60}>
           Gross Volume
         </Text> */}
-        <Axis orientation="bottom" tickStroke="grey" stroke="grey" />
+        <Axis
+          orientation="bottom"
+          tickStroke="grey"
+          stroke="grey"
+          numTicks={1}
+        />
         {/* <Axis orientation="left" tickStroke="grey" stroke="grey" /> */}
         {/* <AnimatedGrid columns={false} numTicks={4} /> */}
         <AnimatedLineSeries
@@ -99,6 +106,8 @@ export default function Chart({ data, accessor }) {
 }
 
 const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: row;
   position: relative;
   left: 20px;
   top: 60px;
