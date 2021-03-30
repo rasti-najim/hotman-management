@@ -1,100 +1,128 @@
-import React, { useEffect } from "react";
-import { appleStock } from "@visx/mock-data";
+import React from "react";
 import { Group } from "@visx/group";
-import { Bar, AreaClosed, LinePath } from "@visx/shape";
-import { scaleLinear, scaleBand, scaleTime } from "@visx/scale";
-import { AxisLeft, AxisBottom } from "@visx/axis";
-import { curveNatural } from "@visx/curve";
-import { Text } from "@visx/text";
-// import { LinearGradient, GradientPinkBlue } from "@visx/gradient";
-import { extent, max } from "d3-array";
+import { BarGroup } from "@visx/shape";
+import { AxisBottom } from "@visx/axis";
+import cityTemperature, {
+  CityTemperature,
+} from "@visx/mock-data/lib/mocks/cityTemperature";
+import { scaleBand, scaleLinear, scaleOrdinal } from "@visx/scale";
+import { timeParse, timeFormat } from "d3-time-format";
 
-const data = appleStock;
+const blue = "#aeeef8";
+export const green = "#e5fd3d";
+const purple = "#9caff6";
+export const background = "#612efb";
+// export const background = "#536dfe";
 
-// Define the graph dimensions and margins
-const width = 750;
-const height = 400;
-const margin = { top: 60, bottom: 60, left: 80, right: 80 };
+const data = cityTemperature.slice(0, 8);
+const keys = Object.keys(data[0]).filter((d) => d !== "date");
+const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
 
-// Then we'll create some bounds
-const xMax = width - margin.left - margin.right;
-const yMax = height - margin.top - margin.bottom;
+const parseDate = timeParse("%Y-%m-%d");
+const format = timeFormat("%b %d");
+const formatDate = (date) => format(parseDate(date));
 
-// We'll make some helpers to get at the data we want
-const x = (d) => new Date(d.date);
-const y = (d) => d.close;
+// accessors
+const getDate = (d) => d.date;
 
-const xScale = scaleTime({
-  range: [0, xMax],
-  domain: extent(data, x),
+// scales
+const dateScale = scaleBand({
+  domain: data.map(getDate),
+  padding: 0.2,
+});
+const cityScale = scaleBand({
+  domain: keys,
+  padding: 0.1,
+});
+const tempScale = scaleLinear({
+  domain: [
+    0,
+    Math.max(
+      ...data.map((d) => Math.max(...keys.map((key) => Number(d[key]))))
+    ),
+  ],
+});
+const colorScale = scaleOrdinal({
+  domain: keys,
+  range: [blue, green, purple],
 });
 
-const yScale = scaleLinear({
-  range: [yMax, 0],
-  domain: [0, max(data, y)],
-});
+export default function BarChart({
+  width,
+  height,
+  events = false,
+  margin = defaultMargin,
+}) {
+  // bounds
+  const xMax = width - margin.left - margin.right;
+  const yMax = height - margin.top - margin.bottom;
 
-// const xScale = scaleBand({
-//   range: [0, xMax],
-//   domain: data.map(x),
-//   padding: 0.4,
-//   round: true,
-// });
+  // update scale output dimensions
+  dateScale.rangeRound([0, xMax]);
+  cityScale.rangeRound([0, dateScale.bandwidth()]);
+  tempScale.range([yMax, 0]);
 
-// const yScale = scaleLinear({
-//   range: [yMax, 0],
-//   domain: [0, Math.max(...data.map(y))],
-//   round: true,
-// });
-
-// Compose together the scale and accessor functions to get point functions
-const compose = (scale, accessor) => (data) => scale(accessor(data));
-const xPoint = compose(xScale, x);
-const yPoint = compose(yScale, y);
-
-export default function BarChart() {
-  useEffect(() => console.log(data));
-  return (
+  return width < 10 ? null : (
     <svg width={width} height={height}>
-      <Text verticalAnchor="start" scaleToFit={true} dx={120} dy={100}>
-        Hello world
-      </Text>
+      <rect
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        fill={background}
+        rx={14}
+      />
       <Group top={margin.top} left={margin.left}>
-        <AxisLeft
-          scale={yScale}
-          top={0}
-          left={0}
-          label="Close Price ($)"
-          stroke="grey"
-        />
-        <AxisBottom
-          scale={xScale}
-          top={yMax}
-          label="Years"
-          stroke="grey"
-          tickTextFill="grey"
-        />
-        {/* <LinearGradient from="#fbc2eb" to="#a6c1ee" id="gradient" /> */}
-        {/* <GradientPinkBlue id="gradient" /> */}
-        <LinePath
+        <BarGroup
           data={data}
-          xScale={xScale}
-          yScale={yScale}
-          x={xPoint}
-          y={yPoint}
-          stroke="#FF0033"
-          curve={curveNatural}
-        />
-        {/* <AreaClosed
-          data={data}
-          xScale={xScale}
-          yScale={yScale}
-          x={xPoint}
-          y={yPoint}
-          //   fill="url(#gradient)"
-          fill="#FF0033"
-        /> */}
+          keys={keys}
+          height={yMax}
+          x0={getDate}
+          x0Scale={dateScale}
+          x1Scale={cityScale}
+          yScale={tempScale}
+          color={colorScale}
+        >
+          {(barGroups) =>
+            barGroups.map((barGroup) => (
+              <Group
+                key={`bar-group-${barGroup.index}-${barGroup.x0}`}
+                left={barGroup.x0}
+              >
+                {barGroup.bars.map((bar) => (
+                  <rect
+                    key={`bar-group-bar-${barGroup.index}-${bar.index}-${bar.value}-${bar.key}`}
+                    x={bar.x}
+                    y={bar.y}
+                    width={bar.width}
+                    height={bar.height}
+                    fill={bar.color}
+                    rx={4}
+                    onClick={() => {
+                      if (!events) return;
+                      const { key, value } = bar;
+                      alert(JSON.stringify({ key, value }));
+                    }}
+                  />
+                ))}
+              </Group>
+            ))
+          }
+        </BarGroup>
       </Group>
+      <AxisBottom
+        top={yMax + margin.top}
+        tickFormat={formatDate}
+        scale={dateScale}
+        stroke={green}
+        tickStroke={green}
+        hideAxisLine
+        tickLabelProps={() => ({
+          fill: green,
+          fontSize: 11,
+          textAnchor: "middle",
+        })}
+      />
     </svg>
   );
 }

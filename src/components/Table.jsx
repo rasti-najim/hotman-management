@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTable, useFilters, useSortBy, useGlobalFilter } from "react-table";
 import styled from "styled-components";
 import { FaPlus } from "react-icons/fa";
-import { Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { motion } from "framer-motion";
 
 // custom
@@ -67,39 +67,41 @@ export default function Table({ columns, data }) {
         />
       </ReservationsContainer>
 
-      <table style={{ width: "100%" }} {...getTableProps()}>
-        <THead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </THead>
-        <TBody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <TRow
-                onClick={() => {
-                  setSelectedRow(row.values);
-                  setShowRowModal(true);
-                }}
-                {...row.getRowProps()}
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
-              </TRow>
-            );
-          })}
-        </TBody>
-      </table>
+      <TableContainer>
+        <table style={{ width: "100%" }} {...getTableProps()}>
+          <THead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </THead>
+          <TBody {...getTableBodyProps()}>
+            {rows.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TRow
+                  onClick={() => {
+                    setSelectedRow(row.values);
+                    setShowRowModal(true);
+                  }}
+                  {...row.getRowProps()}
+                >
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                    );
+                  })}
+                </TRow>
+              );
+            })}
+          </TBody>
+        </table>
+      </TableContainer>
       {/* <Modal showModal={showModal} setShowModal={setShowModal}>
         <Add setShowModal={setShowModal} />
       </Modal>
@@ -144,8 +146,7 @@ const THead = styled.thead`
 
 const TBody = styled.tbody`
   /* font-size: 14px; */
-  border-left: 2px solid
-    ${({ theme }) => (theme.mode == "light" ? "#fff" : "#000")};
+  border-left: 2px solid ${({ theme }) => theme.body};
 `;
 
 const TRow = styled.tr`
@@ -211,4 +212,10 @@ const SearchBox = styled.input`
 
 const StyledFaPlus = styled(FaPlus)`
   padding-right: 5px;
+`;
+
+const TableContainer = styled(Container)`
+  background-color: ${({ theme }) => theme.body};
+  border-radius: 14px;
+  padding: 20px;
 `;

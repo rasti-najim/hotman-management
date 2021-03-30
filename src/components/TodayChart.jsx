@@ -69,7 +69,7 @@ export default function TodayChart() {
         height={300}
         xScale={{ type: "band" }}
         yScale={{ type: "linear" }}
-        margin={{ top: 60, bottom: 60, left: 10, right: 80 }}
+        margin={{ top: 60, bottom: 60, left: 20, right: 80 }}
       >
         <Axis orientation="bottom" />
         {/* <Axis orientation="left" /> */}

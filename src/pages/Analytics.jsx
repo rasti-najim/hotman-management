@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useContext } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Container, Col, Row } from "react-bootstrap";
 import styled from "styled-components";
 import { FaPlus } from "react-icons/fa";
 import { Frame, Page, Stack, useCycle } from "framer";
@@ -13,6 +13,8 @@ import Card from "../components/Card";
 import TodayChart from "../components/TodayChart";
 import Chart from "../components/Chart";
 import BarChart from "../components/BarChart";
+import useWindowSize from "../components/useWindowSize";
+import Loading from "../components/Loading";
 
 const data = appleStock;
 
@@ -29,8 +31,10 @@ const margin = {
 };
 
 export default function Analytics() {
+  const size = useWindowSize();
+
   return (
-    <Container>
+    <StyledContainer>
       <h1>Analytics</h1>
       <CardsContainer>
         <Card title="Arrivals" number={54} />
@@ -38,12 +42,16 @@ export default function Analytics() {
         <Card title="Rooms Occupied" number={50} />
       </CardsContainer>
       <h2>Today</h2>
-      <TodayChart />
+      <Row>
+        <TodayChartContainer>
+          <TodayChart />
+        </TodayChartContainer>
+      </Row>
       <h2>Reports overview</h2>
 
       <div>
         <Row>
-          <Col>
+          <StyledCol>
             <Chart
               title="Gross Volume"
               data={data.filter(function (value) {
@@ -51,8 +59,8 @@ export default function Analytics() {
               })}
               accessor={accessor}
             />
-          </Col>
-          <Col>
+          </StyledCol>
+          <StyledCol>
             <Chart
               title="MRR"
               data={data.filter(function (value) {
@@ -60,10 +68,10 @@ export default function Analytics() {
               })}
               accessor={accessor}
             />
-          </Col>
+          </StyledCol>
         </Row>
         <Row>
-          <Col>
+          <StyledCol>
             <Chart
               title="ARR"
               data={data.filter(function (value) {
@@ -71,8 +79,8 @@ export default function Analytics() {
               })}
               accessor={accessor}
             />
-          </Col>
-          <Col>
+          </StyledCol>
+          <StyledCol>
             <Chart
               title="New Customers"
               data={data.filter(function (value) {
@@ -80,14 +88,17 @@ export default function Analytics() {
               })}
               accessor={accessor}
             />
-          </Col>
+          </StyledCol>
         </Row>
       </div>
-    </Container>
+      <div style={{ marginTop: 40 }}>
+        <BarChart width={0.6 * size.width} height={500} />
+      </div>
+    </StyledContainer>
   );
 }
 
-const Container = styled(motion.div)`
+const StyledContainer = styled(Container)`
   height: 90vh;
   width: 80vw;
   padding-left: 30px;
@@ -106,11 +117,14 @@ const CardsContainer = styled(Row)`
   margin-bottom: 2rem;
 `;
 
-const StyledRow = styled(Row)`
-  justify-content: space-around;
+const TodayChartContainer = styled(Col)`
+  background-color: ${({ theme }) => theme.body};
+  border-radius: 14px;
+  margin: 10px;
 `;
 
-const ChartContainer = styled.div`
-  display: flex;
-  flex-direction: row;
+const StyledCol = styled(Col)`
+  background-color: ${({ theme }) => theme.body};
+  border-radius: 14px;
+  margin: 10px;
 `;
